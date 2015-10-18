@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Smart City Lights</title>
+    <!-- TECHNICAL GUIDE STEP : SCRIPT MANDATORY HEADERS-->
+    <!-- Bootstrap - Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <!-- Bootstrap - Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+    <!-- Bootstrap - Latest compiled and minified JavaScript -->
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.3.5.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Lobster|Open+Sans|Lobster+Two|Inconsolata' rel='stylesheet' type='text/css'>
+    <script>
+// !! TECHNICAL GUIDE STEP : PARSE INITIALIZATION AND OBJECT CREATION !!
+Parse.initialize("kayWALfBm6h1SQdANXoZtTZqA0N9sZsB7cwUUVod", "1FtYiQ1p6n6QlUFXorwlM078O2BW2TJ7Vlv17jaW");
+
+// !! TECHNICAL GUIDE STEP : UPDATE OBJECT (PUT)!!
+function updateIntensity(form) {
+  var newIntensity = Number(form.inputbox.value);
+  var Bulb = Parse.Object.extend("Bulb");
+  var bulb = new Bulb()
+  bulb.set("objectId", "muHzstKOYg");
+  bulb.save(null, {
+    success: function(bulb) {
+      bulb.set("Intensity", newIntensity);
+      bulb.save();
+      alert("Update Success, New Intensity = " + newIntensity);
+    }
+  });
+}
+
+// !! TECHNICAL GUIDE STEP : RETRIEVE OBJECT (GET)!!
+function getInfo() {
+  var Bulb = Parse.Object.extend("Bulb");
+  var query = new Parse.Query(Bulb);
+  var bulb = new Bulb();
+  query.get("muHzstKOYg", {
+    success: function(bulb) {
+      var intensity = bulb.get("Intensity");
+      var health = bulb.get("Health");
+      var hour = bulb.get("Hour");
+      var min = bulb.get("Minute");
+      var city = bulb.get("City");
+      var weather = bulb.get("Weather");
+      var time = "";
+
+      // Update Bulb Intensity
+      document.getElementById("intensity").innerHTML = bulb.get("Intensity");
+
+      // Update Bulb Health
+      if (health == 0)
+        document.getElementById("health").innerHTML = "GOOD";
+      else if (health == 1)
+        document.getElementById("health").innerHTML = "POOR";
+      else if (health == 2)
+        document.getElementById("health").innerHTML = "DAMAGED";
+
+      // Update Local Time
+      if (hour >= 0 && hour <=9)
+      {
+        time = time.concat("0");
+        time = time.concat(hour);
+      }
+      else
+        time = time.concat(hour);
+      time = time.concat(":");
+      if (min >=0 && min <= 9)
+      {
+        time = time.concat("0");
+        time = time.concat(min);
+      }
+      else
+        time = time.concat(min);
+      document.getElementById("time").innerHTML = time;
+
+      // Update City and Weather
+      document.getElementById("weather").innerHTML = weather;
+      document.getElementById("city").innerHTML = city;
+
+
+    },
+    error: function(object, error) {
+      // The object was not retrieved successfully.
+      // error is a Parse.Error with an error code and message.
+    }
+  });
+}
+
+// !! TECHNICAL GUIDE STEP : PUSH NOTIFICATION!!
+// NOTE: Client Side Push needs to be enabled in Application Dashboard Settings!
+function pushHealthNotification(form) {
+  var newHealth = String(form.inputbox.value);
+  Parse.Push.send({
+    channels: ["Health"],
+    data: {
+      "Health":newHealth
+    }
+  }, 
+  {
+    success: function() {
+      alert("Push Successful! New HEALTH = " + newHealth);
+    },
+    error: function(error) {
+      // The object was not retrieved successfully.
+      // error is a Parse.Error with an error code and message.
+      alert("Error" + error);
+    }
+  });
+}
+
+</script>
+  <!-- TECHNICAL GUIDE STEP : BASIC CSS-->
+  <!-- TECHNICAL GUIDE STEP : BASIC HTML-->
+  <style>
+    body {
+      background-image: url(Images/cool-minty-green-tileable-grunge-patterns-part-2-14.jpg);
+      /*border: 20px solid #558C89;*/sm
+    }
+    h1 {
+      font-family: "Lobster"; 
+    }
+    h2 {
+      font-family: "Lobster"; 
+    }
+    h3 {
+      font-family: "Lobster"; 
+    }
+    h4 {
+      font-family: "Lobster"; 
+    }
+    .row {
+      font-family: "Inconsolata";
+      font-weight: bold;
+      font-size: medium;
+      color: black;
+    }
+    p {
+      color: black;
+      font-size: large;
+      font-family: "Inconsolata";
+      font-weight: bold;
+    }
+    .nav-pills li a{
+      color: black;
+      font-size: large;
+    }
+    .nav-pills li a:hover {
+      background-color: #74AFAD;
+    }
+    .nav-pills li.active a:hover {
+      background-color: #74AFAD;
+      color: black;
+    }
+    .nav-pills li.active #own-nav{
+      color: black;
+      background-color: #74AFAD;
+
+    }
+    #own-button {
+      background-color: #D9853B;
+      color: black;
+      font-weight: bold;
+      font-size: medium;
+    }
+    #heading{
+      /*background-color: #74AFAD;
+      color: black; */
+      font-weight: bold;
+      border-radius: 10px;
+      border-style: solid;
+      border-color: #D9853B;
+      background-color: #74AFAD;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <div class="row" >
+        <div class="text-center" id="heading">
+          <h1>Columbia University Internet Of Things Project - Smart City Lights</h1>
+        </div>
+      </div>
+      <div class="row">
+        <br>
+        <div id="own-nav-bar">
+        <div class="col-md-offset-4 col-md-5">
+        <ul id="myTab" class="nav nav-pills">
+          <li class="active"><a href="#home" data-toggle="tab" id="own-nav">Home <span class="glyphicon glyphicon-home"></span></a></li>
+          <li><a href="#about" data-toggle="tab" id="own-nav">About</a></li>
+          <li><a href="#project" data-toggle="tab" id="own-nav">Project</a></li>
+          <li><a href="#contact" data-toggle="tab" id="own-nav">Contact <span class="glyphicon glyphicon-envelope"></span></a></li>
+        </ul>
+        </div>
+        </div>
+      </div>
+      <div id="myTabContent" class="tab-content">
+        <div class="text-center tab-pane fade in active" id="home">
+          <br><br>
+          <div class="row">
+            <br><br>
+            <div class ="col-md-12">
+            <p>Advanced Project - Electrical Engineering<br><br>
+
+Our goal is to monitor and control a light bulb from the Internet. The light bulb can be treated as a street lamp / light that can be controlled by any third party through the cloud. Additionally, we also detect the number of people near the light bulb through Broadcom's WICED Sense sensor. The WICED Sense communicates through Bluetooth Low Energy and informs the cloud about details such as temperature, pressure, etc.
+
+Through these measurements, we can dynamically vary the intensity of the light bulb and read information from it into the cloud. The information is displayed to the end user through a web site. [<a href="http://smartcitylights.parseapp.com/">http://smartcitylights.parseapp.com/</a>]
+            </p>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="about">
+          <div class="row">
+            <div class="col-md-12">
+            <article>
+              <h2>Architecture (How Everything Fits Together)</h2>
+              <div class="row">
+                <div class="text-center">
+                  <img src="Images/lightbulb-flowchart.png" class="img-rounded" width="620" height="400"></img>
+                </div>
+              </div>
+              <h2>Implementation</h2>
+              <article>
+                <h3>Light Bulb</h3>
+                <p>
+                Since we are not using a hardware bulb for the project, the light bulb is being emulated on the Raspberry Pi / Linux machine. We have written the code for our bulb and emulated it to function in any location (city, country). The bulb has some predefined logic that works based on a city's respective weather conditions.
+                </p>
+              </article>
+                <ul>
+                  <li>The bulb's logic is programmed in C and can be found in the file <em>~/Bulb/lightbulb.c</em></li>
+                  <li>The bulb's GUI is programmed in Python and we use the Tkinter library for designing the application's GUI. The code can be found in <em>~/Bulb/bulbemulate.py</em></li>
+                  <li>The weather information is pulled through REST API from <a href="http://openweathermap.org/">http://openweathermap.org/</a> . The code for this can be found in <em>~/Bulb/weather.py</em></li>
+                </ul>
+              <article><br>
+                <h4>The light bulb has two important parameters:</h4>
+                <ul>
+                  <li><em>Intensity:</em> The bulb has 10 intensity levels from 0 - 10 (0 being lowest and 10 being highest). The intensity levels are updated based on time of day, sensor information, and city weather conditions.</li>
+                  <li><em>Health:</em> The bulb has three HEALTH states --> GOOD, POOR, DAMAGED. DAMAGED implies that the bulb is broken i.e. intensity = 0.</li>
+                </ul>
+              </article><br>
+              <p>
+                The three programs mentioned above are tied together through IPC (Inter Process Communication) using sockets. Each program communicated with the other on a specific socket port. The port numbers are hard coded on each of these applications respectively at the top of the program.
+              </p>
+              <p>
+              Example: In lightbulb.c we have defined the PORT_INTENSITY as 50013. Thus lightbulb.c will send data on 50013 port to update the bulb's intensity. The data is received by bulbemulate.py that so that it can accordingly update the bulb's GUI.
+              </p>
+              <p>
+              We have also simulated our own clock on the bulb by setting 1 second in real world to 5 minutes of simulation time. This is done purely for simulation purposes so that the bulb's behaviour can be observed easily. Else we might have to wait for hours in order to observe certain changes.
+              </p>
+              <p>
+              Weather information is dynamically pulled by weather.py from <a href="http://openweathermap.org/">http://openweathermap.org/</a> at periodic intervals. The program communicates with the weather API site to pull information such as weather, weather description, temperature, sunrise and sunset times for any location in the world. The information is pretty accurate and works for most of the well known metropolitan cities. Tests have been done on cities such as New York, and San Francisco.
+              </p>
+              <article>
+                <h4>Some important functions in lightbulb.c that form the core of the bulb:</h4>
+                <ul>
+                  <li><code>void *updateBulbTime(void *) :</code> This thread always runs throughout the life of program and keeps updating the bulb's clock each second. We have simulated the clock by setting 5 minutes (simulation time) = 1 s (real time).
+                  </li>
+                  <li><code>int getIntensity(struct lightBulb *) :</code> This function is used to pull the light bulb's intensity. It takes a pointer to a struct lightBulb as argumen and returns its corresponding intensity.
+                  </li>
+                  <li><code>void updateIntensity(int, char *) :</code> This function updates the light bulb intensity when needed. It takes two arguments --> newIntensity, and a pointer to string variable i.e. Climate (city)
+                  </li>
+                  <li><code>void updateBasedOnTime(struct timeEmulate *, int[ ], int) :</code> The function takes three arguments:
+                    <ul>
+                      <li>a) Bulb Time</li>
+                      <li>b) Intensity of Bulb</li>
+                      <li>c) Server Socket on which it can accept data</li>
+                    </ul>
+                    <br>
+                    This function pretty much forms the core logic for the light bulb. The socket listens on port PORT_WEATHER (50008) to accept data from weather.py. The select() mechanism is used to check if the socket is ready to accept connections. This is necessary else we will keep polling unnecessarily even when there is no data to receive from weather.py . If there are any updates on the intensity, we call updateIntensity() .
+                  </li>
+                  <li>
+                    <code>void *threadPushNotifications() :</code> This function pushes data onto the Parse Application in cloud. It is invoked by updateIntensity().
+                  </li>
+                  <li>
+                  <code>void healthCallBack() :</code> This is a callback function (function pointer) that registers itself with the Parse app to receive push notifications from the cloud. Whenever an explicit change is made on the cloud by an end user from the web site, we will over ride any existing changes and update the bulb accordingly. For example, if a bulb is damaged, we can make the update to HEALTH variable from the website and turn off the bulb running on the Pi / Linux machine.
+                  </li>
+              </article>
+              <p>
+              There is more code than the above mentioned functions in lightbulb.c to tie up the entire program. However, the above functions are key for the bulb's functioning.
+              </p>
+            </article>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="project">
+          <div class="row">
+          <br><br><br>
+          <div class="col-md-offset-3 col-md-6">
+            <table class="table table-bordered table-hover table-responsive">
+              <thead>
+                <tr>
+                  <th>Intensity</th>
+                  <th>Health</th>
+                  <th>City</th>
+                  <th>Time</th>
+                  <th>Weather</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="intensity"></td>
+                  <td id="health"></td>
+                  <td id="city"></td>
+                  <td id="time"></td>
+                  <td id="weather"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <div class="row">
+        <div class="col-md-offset-5 col-md-2">
+          <button type="button" id="own-button" class="btn btn-primary btn-md active" onClick="getInfo()">Click Here for Info</button>
+        </div>
+      </div>
+      <br><br>
+      <div class="row">
+        <div class="col-md-6">
+          <form name="updateIntensityForm" action="" method="POST">Vary Bulb Intensity
+            <input type="" ="text" name="inputbox" value="Enter Intensity" ="">
+            <input type="button" id="own-button" name="button" class="btn btn-primary btn-sm active" value="Update"  onClick="updateIntensity(this.form)">
+          </form>
+        </div>
+        <div class="col-md-6">
+          <form name="pushHealthNotificationForm" action="" method="GET">Vary Bulb Health [GOOD, POOR, DAMAGED]
+            <input type="" ="text" name="inputbox" value="Enter Health" ="">
+            <input type="button" id="own-button" name="button" class="btn btn-primary btn-sm active" value="Push"  onClick="pushHealthNotification(this.form)">
+          </form>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+      <div class="text-center">
+          <p>
+          Click here to visit see source Code<br>
+          <button type="button" id="own-button" class="btn btn-primary btn-md active" onclick="location.href='https://github.com/sareenarazak/IOT_RPI_SmartLights'">Click Here</button>
+          </p>
+      </div>
+      </div>
+    </div> 
+    <div class="tab-pane fade" id="contact">
+      <div class="row">
+        <div class="text-center col-md-6">
+          <address>
+            <strong>Avinash Sridhar</strong><br>
+            Columbia University<br>
+            <abbr title="Phone">P:</abbr> (xxx)-yyy-zzzz<br>
+            <a href="mailto:as4626@columbia.edu">as4626@columbia.edu</a>
+          </address>
+        </div>
+        <div class="text-center col-md-6">
+          <address>
+            <strong>Sareena Ta</strong><br>
+            Columbia University<br>
+            <abbr title="Phone">P:</abbr> (xxx)-yyy-zzzz<br>
+            <a href="mailto:sta2378@columbia.edu">sta2378@columbia.edu</a>
+          </address>
+        </div>
+      </div>
+      <div class="row">
+        <div class="text-center col-md-6">
+          <address>
+            <strong>Michael Wang</strong><br>
+            Columbia University<br>
+            <abbr title="Phone">P:</abbr> (xxx)-yyy-zzzz<br>
+            <a href="mailto:michael.s.wang.38@gmail.com">michael.s.wang.38@gmail.com</a>
+          </address>
+        </div>
+        <div class="text-center col-md-6">
+          <address>
+            <strong>Zoran Kostic</strong><br>
+            Columbia University<br>
+            <abbr title="Phone">P:</abbr> (xxx)-yyy-zzzz<br>
+            <a href="mailto:zk2172@columbia.edu">zk2172@columbia.edu</a>
+          </address>
+        </div>
+      </div>
+    </div>
+      </div> 
+    </div>
+  </body>
+</html>

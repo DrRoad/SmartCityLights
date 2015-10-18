@@ -1,0 +1,14 @@
+{
+  "global": {
+    "parseVersion": "1.4.2"
+  },
+  "applications": {
+    "IoT": {
+      "applicationId": "kayWALfBm6h1SQdANXoZtTZqA0N9sZsB7cwUUVod",
+      "masterKey": "uamJBNP4vjXoUPY5fFvyRBs9BhYg3LOJ5agZ8Eez"
+    },
+    "_default": {
+      "link": "IoT"
+    }
+  }
+}
